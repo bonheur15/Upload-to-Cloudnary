@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloudinary Image Upload</title>
+</head>
+<body>
+
+<h1>Image Upload to Cloudinary</h1>
+<input type="file" id="fileInput" accept="image/*">
+<button onclick="uploadToCloudinary()">Upload Image</button>
+<div id="uploaded-image" style="margin-top: 20px;"></div>
+<script>
+    const upload_preset = "cyj6d8xe";
+    const cloudName = 'dhdwmcivr';
+
+    async function uploadToCloudinary() {
+        const fileInput = document.getElementById('fileInput');
+        const uploadedImageContainer = document.getElementById('uploaded-image');
+
+        if (fileInput.files.length > 0) {
+            const file = fileInput.files[0];
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', upload_preset); 
+
+            try {
+                const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+                    method: 'POST',
+                    body: formData,
+                });
+                if (response.ok) {
+                    const responseData = await response.json();
+                    uploadedImageContainer.innerHTML =
+                        `<img src="${responseData.secure_url}" alt="Uploaded Image">`;
+                } else {
+                    console.error('Failed to upload image to Cloudinary');
+                }
+            } catch (error) {
+                console.error('Error uploading image:', error);
+            }
+        } else {
+            console.error('No file selected for upload.');
+        }
+    }
+</script>
+
+</body>
+</html>
